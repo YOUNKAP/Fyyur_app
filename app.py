@@ -56,8 +56,8 @@ def venues():
   # Select all venues
   venues = Venue.query.all()
   locations = list()
-  for venu in venues:
-    if venu not in locations :
+  for venue in venues:
+    if venue not in locations :
       locations.append((venue.city, venue.state))
   for loc in locations:
     data.append({
@@ -67,7 +67,7 @@ def venues():
     })
 
 
-  for venu in venues:
+  for venue in venues:
     num_upcoming_shows = 0
     #Select shwos
     shows = Show.query.filter_by(venue_id=venue.id).all()
@@ -133,7 +133,7 @@ def show_venue(venue_id):
       upcoming_shows.append(data)
     else:
       past_shows.append(data)
-
+ 
   keys = [    
     "id",
     "name",
@@ -174,6 +174,8 @@ def show_venue(venue_id):
 
 
   data = dict(zip(keys, values ))
+ 
+  
   ###________________________________________________________________________### 
   return render_template('pages/show_venue.html', venue=data)
 
@@ -367,7 +369,7 @@ def edit_artist(artist_id):
         artist.image_link
   ]
 
-  artist_data = dict(zip(keys, values))
+  artist_data = dict(zip(artist_data_keys,  artist_data_values))
 
   return render_template('forms/edit_artist.html', form=form, artist=artist_data)
 
