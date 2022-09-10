@@ -5,6 +5,8 @@ from flask_moment import Moment
 from flask_migrate import Migrate
 from datetime import datetime
 
+
+
 #Configure app
 
 app = Flask(__name__)
@@ -18,6 +20,8 @@ migrate = Migrate(app,db)
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
+
+
 
 
 class Venue(db.Model):
@@ -74,4 +78,5 @@ class Show(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
 
     start_time = db.Column(db.DateTime(timezone=True))
+
 

@@ -114,6 +114,81 @@ def search_venues():
   #End TODO
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
+
+@app.route('/venues/<int:venue_id>')
+
+def show_venue(venue_id):
+
+  #venue = db.session.query(Venue).filter(Venue.id == venue_id).all()
+  venue = Venue.query.get(venue_id)
+
+  data = dict()
+
+  past_shows = list()
+
+  upcoming_shows = list()
+
+
+  past_shows_query = db.session.query(Show).join(Venue).filter(Show.artist_id==Artist.id).filter(Show.start_time<datetime.now()).all()  
+
+
+  for show in past_shows_query:
+
+
+
+    artist = db.session.query(Artist.name, Artist.image_link).filter(Artist.id == show.artist_id).one()
+
+    artist_data= {
+                  "artist_id": show.artist_id,
+                  "artist_name": artist.name,
+                  "artist_image_link": artist.image_link,
+                  "start_time": show.start_time.strftime('%m/%d/%Y'),
+                  }
+
+    past_shows.append(artist_data)
+
+
+  upcoming_shows_query = db.session.query(Show).join(Venue).filter(Show.artist_id==Artist.id).filter(Show. start_time>datetime.now()).all()
+
+  for show in upcoming_shows_query:
+
+    artist = db.session.query(Artist.name, Artist.image_link).filter(Artist.id == show.artist_id).one()
+
+    artist_data = {
+                  "artist_id": show.artist_id,
+                  "artist_name": artist.name,
+                  "artist_image_link": artist.image_link,
+                  "start_time": show.start_time.strftime('%m/%d/%Y'),
+                  }
+
+    upcoming_shows.append(artist_data)
+
+  data={
+    "id": venue.id,
+    "name": venue.name,
+    "genres": venue.genres,
+    "address": venue.address,
+    "city": venue.city,
+    "state": venue.state,
+    "phone": venue.phone,
+    "website": venue.website,
+    "facebook_link": venue.facebook_link,
+    "seeking_talent": venue.seeking_talent,
+    "seeking_description":venue.seeking_description,
+    "image_link": venue.image_link,
+    "past_shows": past_shows,
+    "upcoming_shows": upcoming_shows,
+    "past_shows_count": len(past_shows),
+    "upcoming_shows_count": len(upcoming_shows)}
+
+
+
+  return render_template('pages/show_venue.html', venue=data)
+
+
+
+"""
+
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
@@ -190,6 +265,8 @@ def show_venue(venue_id):
         data.update({"past_shows_count": len(past_shows), "upcoming_shows_count": len(upcoming_shows),})
   #End todo
   return render_template('pages/show_venue.html', venue=data)
+"""
+
 
 #  Create Venue
 #  ----------------------------------------------------------------
@@ -229,7 +306,6 @@ def create_venue_submission():
     data.seeking_talent = True if request.form.get('seeking_talent')!= None else False
     #Get venue description
     data.seeking_description = request.form.get('seeking_description')
-
     #Add to database
     db.session.add(data)
     db.session.commit()
